@@ -1,6 +1,5 @@
 import getopt
 import json
-from lxml import html
 from os import path
 import sys
 
