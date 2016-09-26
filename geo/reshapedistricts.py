@@ -18,12 +18,13 @@ def reshapedistricts(infilename, outfilename):
             .replace('<br>', '')\
             .replace('</div>', '')
         district_name = cleaned.split('DIST_NAME: ', 1)[1].split(' ', 1)[0]
+        code = 'dstrct-{}'.format(
+                cleaned.split('DIST_CODE: ', 1)[1][:2])
         properties = {
             'name': district_name,
-            'code': district_name.lower(),
+            'code': code,
             'level': 'district',
-            'geoid': 'district-{}'.format(
-                cleaned.split('DIST_CODE: ', 1)[1][:2])
+            'geoid': code
         }
         return {
             'type': oldfeature['type'],
