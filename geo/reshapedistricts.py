@@ -20,9 +20,10 @@ def reshapedistricts(infilename, outfilename):
         district_name = cleaned.split('DIST_NAME: ', 1)[1].split(' ', 1)[0]
         properties = {
             'name': district_name,
-            'code': district_name.lower(),
+            'code': 'dstrct-{}'.format(
+                cleaned.split('DIST_CODE: ', 1)[1][:2]),
             'level': 'district',
-            'geoid': 'district-{}'.format(
+            'geoid': 'dstrct-{}'.format(
                 cleaned.split('DIST_CODE: ', 1)[1][:2])
         }
         return {
