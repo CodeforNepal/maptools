@@ -8,4 +8,4 @@ Used for converting a data set that has only one field with counts for each valu
 
 `python census-data/singlefieldwithcount.py -o cookingfuel.csv -i /path/to/census-data/districts -c COOKING_FUEL.csv -f "main type of cooking fuel"`
 
-In this case, we are looking for data in the `COOKING_FUEL.csv` in each of the districts, and we want the main field to be called "main type of cooking fuel", where is the name of the column in the database for Nepal Map.
+In this case, we are looking for data in the `COOKING_FUEL.csv` in each of the districts, and we want the main field to be called "main type of cooking fuel", the name of the column in the database for Nepal Map.
