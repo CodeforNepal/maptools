@@ -53,7 +53,7 @@ def convertcsv(districtsdir, outputfile, fieldname, csvname):
         with open(csvfile, 'r') as data:
             all = data.readlines()
             headers = all[0].split(',')[1:]
-            totals = all[len(all) - 1].split(',')[1:]
+            totals = all[-1].split(',')[1:]
 
             for idx, header in enumerate(headers):
                 value_name = header.strip(' \t\n\r')
@@ -77,6 +77,7 @@ def convertcsv(districtsdir, outputfile, fieldname, csvname):
             'total': value
         })
 
+    all_rows = sorted(all_rows, key=lambda x: x.get('geo_code'))
     with open(outputfile, 'w') as csvout:
         fieldnames = ['geo_code', 'geo_level',
                       fieldname, 'total']
