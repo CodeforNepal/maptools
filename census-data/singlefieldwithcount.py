@@ -77,6 +77,7 @@ def convertcsv(districtsdir, outputfile, fieldname, csvname):
             'total': value
         })
 
+    all_rows = sorted(all_rows, key=lambda x: x.get('geo_code'))
     with open(outputfile, 'w') as csvout:
         fieldnames = ['geo_code', 'geo_level',
                       fieldname, 'total']
