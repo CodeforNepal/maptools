@@ -24,9 +24,6 @@ Example usages:
 
 In this case, we are looking for data in the `COOKING_FUEL.csv` in each of the districts, and we want the main field to be called "main type of cooking fuel", the name of the column in the database for Nepal Map.
 
-
-Example usages:
-
 `python census-data/csvconverter.py -o educationlevel.csv -i /path/to/census-data/districts -c POPULATION_EDUCATION_LEVEL_PASSED.csv -f "main type of cooking fuel" -s -t`
 
 In this case, we are looking for data in the `POPULATION_EDUCATION_LEVEL_PASSED.csv` in each of the districts, and we want the main field to be called "main type of cooking fuel", the name of the column in the database for Nepal Map. The data is divided by gender and we must calculate the totals.
