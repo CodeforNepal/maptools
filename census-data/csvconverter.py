@@ -121,9 +121,10 @@ class BySexRowMaker(RowMaker):
 
 class CsvConverter:
 
-    def __init__(self, row_maker, total_all_rows=False):
+    def __init__(self, row_maker, total_all_rows=False, excluded_columns=[]):
         self.row_maker = row_maker
         self.total_all_rows = total_all_rows
+        self.excluded_columns = excluded_columns
 
     def convert_csv(self, districts_dir, output_file, field_names, csv_name):
         def get_immediate_subdirectories(a_dir):
@@ -146,6 +147,8 @@ class CsvConverter:
                     reader = csv.DictReader(data)
                     for row in reader:
                         row.pop('VDC/MUNICIPALITY')
+                        for column in self.excluded_columns:
+                            row.pop(column)
                         for key, value in row.items():
                             if key in total_dict:
                                 total_dict[key] += int(value)
@@ -167,14 +170,16 @@ class CsvConverter:
 
                     for idx, header in enumerate(headers):
                         value_name = header.strip(' \t\n\r')
-                        district_total = int(totals[idx].strip(' \t\n\r'))
-                        row = self.row_maker.make_row('district',
-                                                      district_geo_code,
-                                                      value_name,
-                                                      district_total
-                                                      )
-                        if row:
-                            district_rows.append(row)
+                        if not [val for val in [header, value_name] if
+                                val in self.excluded_columns]:
+                            district_total = int(totals[idx].strip(' \t\n\r'))
+                            row = self.row_maker.make_row('district',
+                                                          district_geo_code,
+                                                          value_name,
+                                                          district_total
+                                                          )
+                            if row:
+                                district_rows.append(row)
 
         all_rows = district_rows + self.row_maker.national_totals(
             district_rows)
@@ -197,19 +202,21 @@ def main(args):
     csvname = ''
     by_sex = False
     total_all_rows = False
+    excludedcolumns = []
     try:
-        opts, args = getopt.getopt(args, 'hi:o:f:c:st',
+        opts, args = getopt.getopt(args, 'hi:o:f:c:ste:',
                                    ['indir=', 'outputcsv=',
                                     'fieldname=', 'csvname=',
-                                    'bysex', 'totalrows'])
+                                    'bysex', 'totalrows',
+                                    'excludedcolumns='])
     except getopt.GetoptError:
         print('python districtnames.py -i <indir> -o <outputcsv> '
-              '-f <fieldname> -c <csvname> -s -t')
+              '-f <fieldname> -c <csvname> -s -t -e <excludedcolumns>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
             print('python districtnames.py -i <indir> -o <outputcsv> '
-                  '-f <fieldname> -c <csvname> -s -t')
+                  '-f <fieldname> -c <csvname> -s -t -e <excludedcolumns>')
             sys.exit()
         elif opt in ('-i', '--indir'):
             indir = arg
@@ -223,15 +230,17 @@ def main(args):
             by_sex = True
         elif opt in ('-t', '--totalrows'):
             total_all_rows = True
+        elif opt in ('-e', '--excludedcolumns'):
+            excludedcolumns = arg.split(',')
 
     if by_sex:
-        print('Not implemented')
         row_maker = BySexRowMaker(fieldname)
         rows = ['geo_code', 'geo_level', fieldname, 'sex', 'total']
     else:
         row_maker = SingleFieldRowMaker(fieldname)
         rows = ['geo_code', 'geo_level', fieldname, 'total']
-    converter = CsvConverter(row_maker, total_all_rows)
+    converter = CsvConverter(row_maker, total_all_rows=total_all_rows,
+                             excluded_columns=excludedcolumns)
     converter.convert_csv(indir, outputcsv, rows, csvname)
 
 
