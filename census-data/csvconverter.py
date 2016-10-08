@@ -146,6 +146,8 @@ class CsvConverter:
                     total_dict = {}
                     reader = csv.DictReader(data)
                     for row in reader:
+                        if 'TOTAL' == row['VDC/MUNICIPALITY']:
+                            raise Exception('Unexpected total found')
                         row.pop('VDC/MUNICIPALITY')
                         for column in self.excluded_columns:
                             row.pop(column)
@@ -172,7 +174,14 @@ class CsvConverter:
                         value_name = header.strip(' \t\n\r')
                         if not [val for val in [header, value_name] if
                                 val in self.excluded_columns]:
-                            district_total = int(totals[idx].strip(' \t\n\r'))
+                            try:
+                                district_total = int(
+                                    totals[idx].strip(' \t\n\r'))
+                            except ValueError as err:
+                                print('Error in {}, column {}'.format(
+                                    csv_file, header
+                                ))
+                                raise err
                             row = self.row_maker.make_row('district',
                                                           district_geo_code,
                                                           value_name,
