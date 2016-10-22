@@ -19,6 +19,10 @@ Used for converting a data set.
 
 `-e` optional, takes an argument of a comma-separated list of columns to exclude
 
+`-n` optional, takes an argument of a comma-separated list of columns to use for the total, must be used with the `-k` option
+
+`-k` optional, takes an argument of a name to give the value that was generated from the `-n` option, must be used with the `n` option
+
 
 Example usages:
 
@@ -41,3 +45,8 @@ Example usages:
 * The data is divided by gender.
 * We must calculate the totals.
 * We want to exclude the columns `POPULATION_5_AND_ABOVE_BOTH_SEX`, `POPULATION_5_AND_ABOVE_MALE`, `POPULATION_5_AND_ABOVE_FEMALE` ,`LITERACY_RATE_BOTH_SEX` , `LITERACY_RATE_MALE`, and `LITERACY_RATE_FEMALE`
+
+`python census-data/csvconverter.py -o facilities.csv -i /path/to/census-data/districts -c HOUSEHOLD_FACILITY.csv -f "household facilities" -t -n "NO_FACILITY,AT_LEAST_ONE,NOT_STATED" -k "TOTAL_HOUSEHOLDS"`
+
+* We want to take as the total the cumulative value of the columns `NO_FACILITY`, `AT_LEAST_ONE`, and `NOT_STATED`
+* We want to put that total in a column called `TOTAL_HOUSEHOLDS`
