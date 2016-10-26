@@ -231,13 +231,13 @@ def main(args):
                                     'totalcolumns=',
                                     'totalcolumnkey='])
     except getopt.GetoptError:
-        print('python districtnames.py -i <indir> -o <outputcsv> '
+        print('python csvconvert.py -i <indir> -o <outputcsv> '
               '-f <fieldname> -c <csvname> -s -t -e <excludedcolumns> '
               '-n <totalcolumns> -k <totalcolumnkey>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('python districtnames.py -i <indir> -o <outputcsv> '
+            print('python csvconverter.py -i <indir> -o <outputcsv> '
                   '-f <fieldname> -c <csvname> -s -t -e <excludedcolumns> '
                   '-n <totalcolumns> -k <totalcolumnkey>')
             sys.exit()
