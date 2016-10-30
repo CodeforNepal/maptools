@@ -59,21 +59,24 @@ def convert_csv(input_file, output_file):
             geo_code = names_to_geo_ids[row['district']]
             female_count = int(row['FEMALE'])
             male_count = int(row['MALE'])
-            district_rows.append({
-                'geo_level': 'district',
-                'geo_code': geo_code,
-                'sex': 'female',
-                'total': female_count
-            })
-            district_rows.append({
-                'geo_level': 'district',
-                'geo_code': geo_code,
-                'sex': 'male',
-                'total': male_count
-            })
+            district_rows.append(
+                {
+                    'geo_level': 'district',
+                    'geo_code': geo_code,
+                    'sex': 'female',
+                    'total': female_count
+                }
+            )
+            district_rows.append(
+                {
+                    'geo_level': 'district',
+                    'geo_code': geo_code,
+                    'sex': 'male',
+                    'total': male_count
+                }
+            )
 
-    all_rows = district_rows + national_totals(
-        district_rows)
+    all_rows = district_rows + national_totals(district_rows)
     sorted_rows = sorted(all_rows, key=lambda x: x.get('geo_code'))
     with open(output_file, 'w') as csv_out:
         csv_keys = sorted_rows[0].keys()
