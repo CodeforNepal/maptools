@@ -3,6 +3,10 @@ import json
 from os import path
 import sys
 
+'''
+Utility for transforming geo data into the correct format for district.geojson
+in nepalmap
+'''
 
 def reshapedistricts(infilename, outfilename):
     print('Reading from {} and writing to {}'.format(infilename, outfilename))
@@ -18,13 +22,12 @@ def reshapedistricts(infilename, outfilename):
             .replace('<br>', '')\
             .replace('</div>', '')
         district_name = cleaned.split('DIST_NAME: ', 1)[1].split(' ', 1)[0]
-        code = 'dstrct-{}'.format(
-                cleaned.split('DIST_CODE: ', 1)[1][:2])
+        code = cleaned.split('DIST_CODE: ', 1)[1][:2]
         properties = {
             'name': district_name,
             'code': code,
             'level': 'district',
-            'geoid': code
+            'geoid': 'district-{}'.format(code)
         }
         return {
             'type': oldfeature['type'],
