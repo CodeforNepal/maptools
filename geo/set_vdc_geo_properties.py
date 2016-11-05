@@ -5,7 +5,7 @@ import sys
 
 '''
 Script to manipulate the properties of each VDC in the vdc.geojson file
-in the goe repository and convert each to the format needed for NepalMap
+in the geo repository and convert each to the format needed for NepalMap
 '''
 
 
@@ -17,7 +17,7 @@ def convert_csv(input_file, output_file):
             old_type = feature['type']
             old_geometry = feature['geometry']
             old_properties = feature['properties']
-            code = old_properties['ID_4']
+            code = str(old_properties['ID_4'])
             name = re.sub('(?<!^)(?=[A-Z])', ' ',
                           re.sub('[^a-zA-Z]+', '',
                                  old_properties['NAME_4'].replace('N.P',
@@ -26,8 +26,7 @@ def convert_csv(input_file, output_file):
             new_properties = {
                 'code': code,
                 'name': name,
-                'geoid': '{}-{}'.format(code,
-                                        name.replace(' ', '-').lower()),
+                'geoid': '{}-{}'.format('vdc', code),
                 'level': 'vdc'
             }
             return {
