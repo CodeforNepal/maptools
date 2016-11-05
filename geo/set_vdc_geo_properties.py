@@ -1,5 +1,6 @@
 import getopt
 import json
+import re
 import sys
 
 '''
@@ -17,13 +18,16 @@ def convert_csv(input_file, output_file):
             old_geometry = feature['geometry']
             old_properties = feature['properties']
             code = old_properties['ID_4']
-            name = old_properties['NAME_4']
+            name = re.sub('(?<!^)(?=[A-Z])', ' ',
+                          re.sub('[^a-zA-Z]+', '',
+                                 old_properties['NAME_4'].replace('N.P',
+                                                                  'Municipality').replace(
+                                     'National Par', 'National Park')))
             new_properties = {
                 'code': code,
                 'name': name,
                 'geoid': '{}-{}'.format(code,
-                                        name.replace(' ', '-').replace('.',
-                                                                       '')),
+                                        name.replace(' ', '-').lower()),
                 'level': 'vdc'
             }
             return {

@@ -1,6 +1,7 @@
 import getopt
 import csv
 import json
+import re
 import sys
 
 
@@ -103,6 +104,11 @@ def convert_csv(input_file, output_file):
 
         def select_keys_from_vdc_properties(vdc):
             district_name = vdc['NAME_3']
+            vdc_name = re.sub('(?<!^)(?=[A-Z])', ' ',
+                              re.sub('[^a-zA-Z]+', '',
+                                     vdc['NAME_4'].replace('N.P',
+                                                           'Municipality').replace(
+                                         'National Par', 'National Park')))
             district_id = names_to_geo_ids[district_name]
             return {
                 'country': vdc['NAME_0'],
@@ -111,7 +117,7 @@ def convert_csv(input_file, output_file):
                 'district_id': district_id,
                 'district': district_name,
                 'vdc_geo_code': vdc['ID_4'],
-                'vdc': vdc['NAME_4'],
+                'vdc': vdc_name,
 
             }
         properties = list(map(lambda f: select_keys_from_vdc_properties(
