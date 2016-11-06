@@ -123,11 +123,10 @@ class BySexRowMaker(RowMaker):
 
 class CsvConverter:
 
-    def __init__(self, row_maker, total_all_rows=False, excluded_columns=None,
+    def __init__(self, row_maker, excluded_columns=None,
                  total_column_names=None, total_column_key=None,
                  vdc_names_to_geo_ids=None):
         self.row_maker = row_maker
-        self.total_all_rows = total_all_rows
         self.excluded_columns = excluded_columns if excluded_columns else []
         self.total_columns = total_column_names if total_column_names else []
         self.total_column_key = total_column_key
@@ -159,69 +158,42 @@ class CsvConverter:
             district_geo_code = district_names_to_geo_ids[district]
             unmapped_vdcs = set()
             with open(csv_file, 'r') as data:
-                if self.total_all_rows:
-                    total_dict = {}
-                    reader = csv.DictReader(data)
-                    for row in reader:
-                        vdc = row['VDC/MUNICIPALITY']
-                        if 'TOTAL' == vdc:
-                            raise Exception('Unexpected TOTAL row found')
-                        vdc_geo_code = self.__get_vdc_geo_code(district, vdc)
-                        row.pop('VDC/MUNICIPALITY')
-                        for column in self.excluded_columns:
+                total_dict = {}
+                reader = csv.DictReader(data)
+                for row in (row for row in reader if
+                            row['VDC/MUNICIPALITY'] != 'TOTAL'):
+                    vdc = row['VDC/MUNICIPALITY']
+                    vdc_geo_code = self.__get_vdc_geo_code(district, vdc)
+                    row.pop('VDC/MUNICIPALITY')
+                    for column in self.excluded_columns:
+                        row.pop(column)
+                    if self.total_columns and self.total_column_key:
+                        row[self.total_column_key] = 0
+                        for column in self.total_columns:
+                            row[self.total_column_key] += int(row[column])
                             row.pop(column)
-                        if self.total_columns and self.total_column_key:
-                            row[self.total_column_key] = 0
-                            for column in self.total_columns:
-                                row[self.total_column_key] += int(row[column])
-                                row.pop(column)
-                        for key, value in row.items():
-                            if vdc_geo_code:
-                                vdc_row = self.row_maker.make_row('vdc',
-                                                                  vdc_geo_code,
-                                                                  key,
-                                                                  int(value))
-                            else:
-                                vdc_row = None
-                                unmapped_vdcs.add(vdc)
-                            if vdc_row:
-                                vdc_rows.append(vdc_row)
-                            if key in total_dict:
-                                total_dict[key] += int(value)
-                            else:
-                                total_dict[key] = int(value)
-                    for key, value in total_dict.items():
-                        row = self.row_maker.make_row('district',
-                                                      district_geo_code,
-                                                      key,
-                                                      value)
-                        if row:
-                            district_rows.append(row)
-
-                else:
-                    all_lines = data.readlines()
-                    headers = all_lines[0].split(',')[1:]
-                    totals = all_lines[-1].split(',')[1:]
-
-                    for idx, header in enumerate(headers):
-                        value_name = header.strip(' \t\n\r')
-                        if not [val for val in [header, value_name] if
-                                val in self.excluded_columns]:
-                            try:
-                                district_total = int(
-                                    totals[idx].strip(' \t\n\r'))
-                            except ValueError as err:
-                                print('Error in {}, column {}'.format(
-                                    csv_file, header
-                                ))
-                                raise err
-                            row = self.row_maker.make_row('district',
-                                                          district_geo_code,
-                                                          value_name,
-                                                          district_total
-                                                          )
-                            if row:
-                                district_rows.append(row)
+                    for key, value in row.items():
+                        if vdc_geo_code:
+                            vdc_row = self.row_maker.make_row('vdc',
+                                                              vdc_geo_code,
+                                                              key,
+                                                              int(value))
+                        else:
+                            vdc_row = None
+                            unmapped_vdcs.add(vdc)
+                        if vdc_row:
+                            vdc_rows.append(vdc_row)
+                        if key in total_dict:
+                            total_dict[key] += int(value)
+                        else:
+                            total_dict[key] = int(value)
+                for key, value in total_dict.items():
+                    row = self.row_maker.make_row('district',
+                                                  district_geo_code,
+                                                  key,
+                                                  value)
+                    if row:
+                        district_rows.append(row)
             if unmapped_vdcs:
                 print('No data found for {} in '
                       'district {}'.format(', '.join(unmapped_vdcs),
@@ -249,28 +221,25 @@ def main(args):
     fieldname = ''
     csvname = ''
     by_sex = False
-    total_all_rows = False
     excluded_columns = []
     total_columns = []
     total_column_key = None
     vdc_names_to_geo_ids = None
     try:
-        opts, args = getopt.getopt(args, 'hi:o:v:f:c:ste:n:k:',
+        opts, args = getopt.getopt(args, 'hi:o:v:f:c:se:n:k:',
                                    ['indir=', 'outputcsv=', 'vdcjson='
-                                    'fieldname=', 'csvname=',
-                                    'bysex', 'totalrows',
-                                    'excludedcolumns=',
-                                    'totalcolumns=',
+                                    'fieldname=', 'csvname=', 'bysex',
+                                    'excludedcolumns=', 'totalcolumns=',
                                     'totalcolumnkey='])
     except getopt.GetoptError:
-        print('python csvconvert.py -i <indir> -o <outputcsv> -v <vdcjson>'
-              '-f <fieldname> -c <csvname> -s -t -e <excludedcolumns> '
+        print('python csvconverter.py -i <indir> -o <outputcsv> -v <vdcjson>'
+              '-f <fieldname> -c <csvname> -s -e <excludedcolumns> '
               '-n <totalcolumns> -k <totalcolumnkey>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
             print('python csvconverter.py -i <indir> -o <outputcsv> '
-                  '-v <vdcjson> -f <fieldname> -c <csvname> -s -t '
+                  '-v <vdcjson> -f <fieldname> -c <csvname> -s '
                   '-e <excludedcolumns> -n <totalcolumns> -k <totalcolumnkey>')
             sys.exit()
         elif opt in ('-i', '--indir'):
@@ -285,8 +254,6 @@ def main(args):
             csvname = arg
         elif opt in ('-s', '--csvname'):
             by_sex = True
-        elif opt in ('-t', '--totalrows'):
-            total_all_rows = True
         elif opt in ('-e', '--excludedcolumns'):
             excluded_columns = arg.split(',')
         elif opt in ('-n', '--totalcolumns'):
@@ -308,7 +275,7 @@ def main(args):
     else:
         row_maker = SingleFieldRowMaker(fieldname)
         rows = ['geo_code', 'geo_level', fieldname, 'total']
-    converter = CsvConverter(row_maker, total_all_rows=total_all_rows,
+    converter = CsvConverter(row_maker,
                              excluded_columns=excluded_columns,
                              total_column_names=total_columns,
                              total_column_key=total_column_key,
