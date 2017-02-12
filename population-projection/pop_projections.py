@@ -3,36 +3,7 @@ import getopt
 import sys
 from itertools import groupby
 from operator import itemgetter
-
-names_to_geo_ids = {
-    'Khotang': '13', 'Rautahat': '31', 'Dailekha': '63',
-    'Ramechhap': '18', 'Banke': '65', 'Sarlahi': '22',
-    'Myagdi': '49', 'Sindhuli': '19', 'Gulmi': '45',
-    'Saptari': '15', 'Parsa': '33', 'Rasuwa': '28',
-    'Salyan': '61', 'Rupandehi': '44', 'Mugu': '53',
-    'Bajura': '67', 'Dhankuta': '07', 'Dang': '60',
-    'Kathmandu': '27', 'Sankhuwasabha': '05',
-    'Solukhumbu': '11', 'Doti': '70',
-    'Arghakhanchi': '46', 'Baglung': '51',
-    'Bhojpur': '06', 'Dhanusha': '20', 'Panchthar': '02',
-    'Kalikot': '55', 'Tanahun': '38', 'Bardiya': '66',
-    'Lalitpur': '26', 'Humla': '56', 'Kaski': '40',
-    'Syangja': '41', 'Dadeldhura': '74', 'Dhading': '30',
-    'Pyuthan': '59', 'Taplejung': '01', 'Rolpa': '58',
-    'Bhaktapur': '25', 'Lamjung': '37', 'Sunsari': '10',
-    'Kapilbastu': '47', 'Kanchanpur': '75',
-    'Kailali': '71', 'Sindhupalchowk': '23',
-    'Jumla': '54', 'Morang': '09', 'Dolpa': '52',
-    'Surkhet': '64', 'Siraha': '16', 'Nawalparasi': '42',
-    'Chitwan': '35', 'Jhapa': '04', 'Baitadi': '73',
-    'Aachham': '68', 'Makawanpur': '34', 'Bara': '32',
-    'Okhaldhunga': '12', 'Rukum': '57', 'Darchula': '72',
-    'Tehrathum': '08', 'Nuwakot': '29', 'Bajhang': '69',
-    'Mustang': '48', 'Parbat': '50', 'Udayapur': '14',
-    'Illam': '03', 'Manang': '39', 'Palpa': '43',
-    'Dolakha': '17', 'Jajarkot': '62', 'Mahottari': '21',
-    'Kavrepalanchowk': '24', 'Gorkha': '36'
-}
+from shared import geoidmappings
 
 
 def national_totals(district_rows):
@@ -56,7 +27,7 @@ def convert_csv(input_file, output_file):
     with open(input_file, 'r') as data:
         reader = csv.DictReader(data)
         for row in reader:
-            geo_code = names_to_geo_ids[row['district']]
+            geo_code = geoidmappings.names_to_geo_ids[row['district']]
             female_count = int(row['FEMALE'])
             male_count = int(row['MALE'])
             district_rows.append(
