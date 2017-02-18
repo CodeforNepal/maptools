@@ -43,17 +43,17 @@ def national_totals(rows):
 
 
 def add_missing_langs_for_area(all_langs, lang_tuples_for_area):
-    # langs_in_area = list(map(lambda tup: tup[0], lang_tuples_for_area))
-    langs_not_in_area = set(all_langs) - set(map(lambda tup: tup[0], lang_tuples_for_area))
-    zeroes = [(lang, 0) for lang in langs_not_in_area]
-    return zeroes
+    langs_not_in_area = set(all_langs) - set(map(lambda tup: tup[0],
+                                                 lang_tuples_for_area))
+    return [(lang, 0) for lang in langs_not_in_area]
 
 
 def district_totals(rows):
     '''
     :param rows: data from CSV to be transformed into dicts for NepalMap
-    :return: for each district, a dict for each of the 8 most commonly spoken
-    languages in the district and dicts for "Others" and for "Not Reported"
+    :return: for each district, a dict for each of the languages spoken in
+    Nepal. Any language not represented in the district is assigned a total
+    of zero for the district.
     '''
     all_langs = set(map(lambda row: row['Caste'], rows))
     district_lang_getter = itemgetter('District', 'Caste')
