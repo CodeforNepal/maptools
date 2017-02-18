@@ -82,7 +82,6 @@ def convert_csv(populationfile, indicatorfile, indicator, rowname, outputfile):
 
         all_rows = district_rows + national_totals(district_rows, rowname)
 
-        a = 'a'
     sorted_rows = sorted(all_rows, key=lambda x: (x.get('geo_code'),
                                                   x.get('poverty')))
 
