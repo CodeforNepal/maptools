@@ -49,7 +49,8 @@ def convert_csv(inputfile, outputfile):
                          in [district_age_totals({desired_key: row[desired_key]
                                                   for desired_key
                                                   in desired_keys})
-                             for row in reader] for row in district_age_lists]
+                             for row in reader]
+                         for row in district_age_lists]
 
         national_data = national_totals(district_data)
 
