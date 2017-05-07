@@ -18,28 +18,28 @@ def build_local_bodies(local_bodies_dict):
         {
             'geo_level': geo_level,
             'geo_code': geo_code,
-            'sex': 'Gaupalika',
+            'body_type': 'Gaupalika',
             'total': int(local_bodies_dict['Gaupalika']) if local_bodies_dict[
                 'Gaupalika'] else 0
         },
         {
             'geo_level': geo_level,
             'geo_code': geo_code,
-            'sex': 'Nagarpalika',
+            'body_type': 'Nagarpalika',
             'total': int(local_bodies_dict['Nagarpalika']) if
             local_bodies_dict['Nagarpalika'] else 0
         },
         {
             'geo_level': geo_level,
             'geo_code': geo_code,
-            'sex': 'Upa Mahanarpalika',
+            'body_type': 'Upa Mahanarpalika',
             'total': int(local_bodies_dict['Upa Mahanarpalika'])
             if local_bodies_dict['Upa Mahanarpalika'] else 0
         },
         {
             'geo_level': geo_level,
             'geo_code': geo_code,
-            'sex': 'Mahanarpalika',
+            'body_type': 'Mahanarpalika',
             'total': int(local_bodies_dict['Mahanarpalika']) if
             local_bodies_dict['Mahanarpalika'] else 0
         }
