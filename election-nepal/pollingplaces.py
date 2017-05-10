@@ -10,7 +10,7 @@ from shared import geoidmappings
 PollingStations = namedtuple('PollingStations', 'place, pollingstations')
 
 
-def voter_totals(polling_places_tuple):
+def polling_places(polling_places_tuple):
     if polling_places_tuple.place == 'Total':
         geo_level = 'country'
         geo_code = 'NP'
@@ -31,8 +31,8 @@ def convert_csv(inputfile, outputfile):
     with open(inputfile, 'r') as data, open(outputfile, 'w') as csv_out:
         reader = csv.reader(data)
         csv_rows = [row for row in reader][1:]
-        polling_place_data = [voter_totals(PollingStations(row[1],
-                                                           row[3]))
+        polling_place_data = [polling_places(PollingStations(row[1],
+                                                             row[3]))
                               for row in csv_rows]
         csv_keys = ['geo_level', 'geo_code', 'number of polling places']
         writer = csv.writer(csv_out)
