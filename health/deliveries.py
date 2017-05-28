@@ -121,13 +121,13 @@ def main(args):
                                    ['inputfile=',
                                     'outputfile='])
     except getopt.GetoptError:
-        print('python infantnutrition.py '
+        print('python deliveries.py '
               '-i <inputfile> '
               '-o <outputfile> ')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('python infantnutrition.py '
+            print('python deliveries.py '
                   '-i <inputfile> '
                   '-o <outputfile> ')
             sys.exit()
