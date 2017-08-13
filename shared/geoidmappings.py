@@ -39,6 +39,7 @@ names_to_geo_ids = {
     'Kanchanpur': '75',
     'Kapilbastu': '47',
     'Kapilavastu': '47',
+    'Kapilvastu': '47',
     'Kaski': '40',
     'Kathmandu': '27',
     'Kavrepalanchowk': '24',
