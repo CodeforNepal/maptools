@@ -92,4 +92,5 @@ names_to_geo_ids = {
     'Terhathum': '08',
     'Terathum': '08',
     'Udayapur': '14',
+    'Udaypur': '14'
 }
