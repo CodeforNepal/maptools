@@ -6,23 +6,22 @@ import sys
 from shared import geoidmappings
 
 
-
-
 def national_totals(rows):
-    forested = sum(map(lambda i: float(i['Forest land']), rows))
-    not_forested = sum(map(lambda i: float(i['Forest land']), rows)) - forested
+    forested = sum(map(lambda i: round(float(i['Forest land'])), rows))
+    not_forested = sum(map(lambda i: round(float(i['Total Land'])), rows)) - \
+                   forested
     return [
         {
             'geo_level': 'country',
             'geo_code': 'NP',
-            'land_use': 'forested',
-            'total': "%.2f" % forested
+            'land use': 'forested',
+            'total': forested
         },
         {
             'geo_level': 'country',
             'geo_code': 'NP',
-            'land_use': 'not forested',
-            'total': "%.2f" % not_forested
+            'land use': 'not forested',
+            'total': not_forested
         }
     ]
 
@@ -31,20 +30,19 @@ def build_forestry_records(forestry_dict):
     geo_level = 'district'
     geo_code = geoidmappings.names_to_geo_ids[
         forestry_dict['District']]
-    forested = "%.2f" % float(forestry_dict['Forest land'])
-    not_forested = "%.2f" % (float(forestry_dict['Total Land']) -
-                             float(forestry_dict['Forest land']))
+    forested = round(float(forestry_dict['Forest land']))
+    not_forested = round(float(forestry_dict['Total Land'])) - forested
     return [
         {
             'geo_level': geo_level,
             'geo_code': geo_code,
-            'land_use': 'forested',
+            'land use': 'forested',
             'total': forested
         },
         {
             'geo_level': geo_level,
             'geo_code': geo_code,
-            'land_use': 'not forested',
+            'land use': 'not forested',
             'total': not_forested
         }
     ]
