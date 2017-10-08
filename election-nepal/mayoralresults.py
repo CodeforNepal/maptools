@@ -47,13 +47,10 @@ def results_for_district(results_tuple):
          if results_tuple.others else 0
          }
     ]
+    winners = sum([item['total'] for item in party_results])
 
-    party_results.append({
-        'geo_level': 'district',
-        'geo_code': geo_code,
-        'party': 'Undetermined',
-        'total': local_bodies - sum([item['total'] for item in party_results])
-         })
+    if (local_bodies - winners) < 0:
+        print('Discrepancy for {}, number of local bodies ({}) is less than winners: ({})'.format(results_tuple.district, local_bodies, winners))
 
     return party_results
 
@@ -78,11 +75,13 @@ def convert_csv(inputfile, mayoraloutput, deputyoutput):
         csv_keys = ['geo_level', 'geo_code', 'party', 'total']
         reader = csv.reader(data)
         csv_rows = [row for row in reader][3:]
+        print('Getting Mayor data')
         district_mayoral_data = [district_item for district_list in 
                                  [results_for_district(ElectionResults(
                                      row[0], row[2], row[3], row[5], row[7], 
                                      row[9], row[11])) for row in csv_rows]
                                  for district_item in district_list]
+        print('Getting Deputy Mayor data')
         district_deputy_mayoral_data = [district_item for district_list in
                                         [results_for_district(ElectionResults(
                                             row[0], row[2], row[4], row[6],
