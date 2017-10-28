@@ -13,7 +13,7 @@ facility_type_map = {
     'Zonal Hospital': "ZONAL_HOSPITAL",
     'Central Hospital': "CENTRAL_HOSPITAL",
     'Health Center': "HEALTH_CENTER",
-    'Primary Health Center': "PRIMARY_HEALTH_CENTER", 
+    'Primary Health Center': "PRIMARY_HEALTH_CENTER",
     'Supply Center': "SUPPLY_CENTER",
     'District Center': "DISTRICT_CENTER",
     'Sub Center': "SUB_CENTER",
@@ -34,28 +34,37 @@ facility_type_map = {
     'District Ayurvedic HC': "DISTRICT_AYURVEDIC_HC"
 }
 
+all_facilities = set([
+    val for _, val
+    in facility_type_map.iteritems()
+])
+
+all_districts = set([
+    val for _, val
+    in geoidmappings.names_to_geo_ids.iteritems()
+])
+
 geo_level_key = 'geo_level'
 geo_code_key = 'geo_code'
 facility_type_key = 'facility_type'
 total_key = 'total'
 
-def national_totals(district_rows):
 
-    all_facilities = set([val for _, val 
-        in facility_type_map.iteritems()])
+def national_totals(district_rows):
 
     return [{
         geo_level_key: 'country',
         geo_code_key: 'NP',
         facility_type_key: facility,
         total_key: sum([
-            district['total'] for district
-                in district_rows if 
-                    district['facility_type'] ==
-                        facility
-            ])
+            district['total'] for
+            district in district_rows if
+            district['facility_type'] ==
+            facility
+        ])
         } for facility in all_facilities
     ]
+
 
 def get_data_from_shapefile(filename):
     sf = shapefile.Reader(filename)
@@ -71,10 +80,15 @@ def get_data_from_shapefile(filename):
             facility_type = rec[1]
 
             if (len(facility_type) and
-                facility_type in facility_type_map):
-                facility_type = facility_type_map[facility_type]
-                data[district_id][facility_type] = data[district_id][facility_type] + 1 if (
-                    facility_type in data[district_id]) else 1
+               facility_type in facility_type_map):
+                    facility_type = facility_type_map[facility_type]
+
+                    if facility_type in data[district_id]:
+                        new_count = data[district_id][facility_type] + 1
+                    else:
+                        new_count = 1
+                    
+                    data[district_id][facility_type] = new_count
             else:
                 print("{0} not in facility_type_map".format(rec))
 
@@ -85,16 +99,11 @@ def get_data_from_shapefile(filename):
 
 def extract_each_district(district_data):
     district_rows = []
-    facilities = set([val for _, val
-        in facility_type_map.iteritems()])
 
-    districts = set([val for _, val
-        in geoidmappings.names_to_geo_ids.iteritems()])
-
-    for district in districts:
+    for district in all_districts:
         if district in district_data:
             this_district = district_data[district]
-            for facility in facilities:
+            for facility in all_facilities:
                 if facility in this_district:
                     count = this_district[facility]
                 else:
@@ -115,9 +124,6 @@ def convert_to_csv(inputfile, outputfile):
     district_data = get_data_from_shapefile(inputfile)
 
     # find any missing districts
-    all_districts = set([val for _, val 
-        in geoidmappings.names_to_geo_ids.iteritems()])
-
     districts_with_data = set([key for key, _ 
         in district_data.iteritems()])
 
