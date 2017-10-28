@@ -87,7 +87,7 @@ def get_data_from_shapefile(filename):
                         new_count = data[district_id][facility_type] + 1
                     else:
                         new_count = 1
-                    
+
                     data[district_id][facility_type] = new_count
             else:
                 print("{0} not in facility_type_map".format(rec))
@@ -96,6 +96,7 @@ def get_data_from_shapefile(filename):
             print("Unknown district: {0}".format(rec))
 
     return data
+
 
 def extract_each_district(district_data):
     district_rows = []
@@ -118,14 +119,17 @@ def extract_each_district(district_data):
 
     return district_rows
 
+
 def convert_to_csv(inputfile, outputfile):
     print('Input file: {}\nOutput file: {}'.format(inputfile, outputfile))
 
     district_data = get_data_from_shapefile(inputfile)
 
     # find any missing districts
-    districts_with_data = set([key for key, _ 
-        in district_data.iteritems()])
+    districts_with_data = set([
+        key for key, _
+        in district_data.iteritems()
+    ])
 
     districts_missing_data = list(all_districts - districts_with_data)
     if len(districts_missing_data):
@@ -138,17 +142,18 @@ def convert_to_csv(inputfile, outputfile):
 
     with open(outputfile, 'w') as csv_out:
         csv_keys = [
-            geo_code_key, 
-            geo_level_key, 
-            facility_type_key, 
+            geo_code_key,
+            geo_level_key,
+            facility_type_key,
             total_key
         ]
         writer = csv.writer(csv_out)
         writer.writerow(csv_keys)
         for row in national_totals(district_csv_data) + district_csv_data:
             writer.writerow([
-                row[key] for key in csv_keys 
+                row[key] for key in csv_keys
             ])
+
 
 def main(args):
     inputfile = ''
@@ -175,6 +180,7 @@ def main(args):
 
     convert_to_csv(inputfile, outputfile)
     print('Done!')
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
