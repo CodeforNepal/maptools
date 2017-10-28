@@ -34,16 +34,21 @@ facility_type_map = {
     'District Ayurvedic HC': "DISTRICT_AYURVEDIC_HC"
 }
 
+geo_level_key = 'geo_level'
+geo_code_key = 'geo_code'
+facility_type_key = 'facility_type'
+total_key = 'total'
+
 def national_totals(district_rows):
 
     all_facilities = set([val for _, val 
         in facility_type_map.iteritems()])
 
     return [{
-        'geo_level': 'country',
-        'geo_code': 'NP',
-        'facility_type': facility,
-        'total': sum([
+        geo_level_key: 'country',
+        geo_code_key: 'NP',
+        facility_type_key: facility,
+        total_key: sum([
             district['total'] for district
                 in district_rows if 
                     district['facility_type'] ==
@@ -96,10 +101,10 @@ def extract_each_district(district_data):
                     count = 0
 
                 district_rows.append({
-                    'geo_level': 'district',
-                    'geo_code': district,
-                    'facility_type': facility,
-                    'total': count
+                    geo_level_key: 'district',
+                    geo_code_key: district,
+                    facility_type_key: facility,
+                    total_key: count
                 })
 
     return district_rows
@@ -126,7 +131,12 @@ def convert_to_csv(inputfile, outputfile):
     district_csv_data = extract_each_district(district_data)
 
     with open(outputfile, 'w') as csv_out:
-        csv_keys = ['geo_code', 'geo_level', 'facility_type', 'total']
+        csv_keys = [
+            geo_code_key, 
+            geo_level_key, 
+            facility_type_key, 
+            total_key
+        ]
         writer = csv.writer(csv_out)
         writer.writerow(csv_keys)
         for row in national_totals(district_csv_data) + district_csv_data:
