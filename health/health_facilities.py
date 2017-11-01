@@ -66,28 +66,14 @@ def national_totals(district_rows):
         } for facility in all_facilities
     ]
 
-unique_facilities = []
-
-def facility_is_unique(facility_rec):
-    hash = "{0}_{1}_{2}_{3}".format(
-        facility_rec[1],
-        facility_rec[2],
-        facility_rec[3],
-        facility_rec[4]
-    )
-    if hash not in unique_facilities:
-        unique_facilities.append(hash)
-        return True
-
-    return False
-
-#HealthFacility = namedtuple('HealthFacility',
-#    ['facility_type', 'district_name', 'vdc_name', 'vdc_code'])
+HealthFacility = namedtuple('HealthFacility',
+    ['facility_type', 'district_id', 'vdc_name', 'vdc_code'])
 
 def get_data_from_shapefile(filename):
     sf = shapefile.Reader(filename)
 
     data = {}
+    facilities = set()
     for rec in sf.records():
         district = rec[2]
         if district in geoidmappings.names_to_geo_ids:
@@ -95,27 +81,33 @@ def get_data_from_shapefile(filename):
             if district_id not in data:
                 data[district_id] = {}
 
-            facility_type = rec[1]
+            this_facility = HealthFacility(
+                    rec[1], district_id, rec[3], rec[4])
 
-            if (len(facility_type) and
-               facility_type in facility_type_map):
+            if verbose and this_facility in facilities:
+                print("{0} not unique".format(this_facility))
 
-                    if facility_is_unique(rec):
-                        facility_type = facility_type_map[facility_type]
-
-                        if facility_type in data[district_id]:
-                            new_count = data[district_id][facility_type] + 1
-                        else:
-                            new_count = 1
-
-                        data[district_id][facility_type] = new_count
-                    elif verbose:
-                        print("{0} not unique".format(rec))
-            elif verbose:
-                print("{0} not in facility_type_map".format(rec))
+            facilities.add(HealthFacility(
+                    rec[1], district_id, rec[3], rec[4]))
 
         elif verbose:
             print("Unknown district: {0}".format(rec))
+
+    for f in facilities:
+        if (len(f.facility_type) and
+           f.facility_type in facility_type_map):
+
+                facility_type = facility_type_map[f.facility_type]
+
+                if facility_type in data[f.district_id]:
+                    new_count = data[f.district_id][facility_type] + 1
+                else:
+                    new_count = 1
+
+                data[f.district_id][facility_type] = new_count
+
+        elif verbose:
+            print("{0} not in facility_type_map".format(rec))
 
     return data
 
