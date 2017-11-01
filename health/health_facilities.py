@@ -6,6 +6,7 @@ import sys
 from collections import namedtuple
 from shared import geoidmappings
 
+verbose = False
 
 facility_type_map = {
     'Hospital': 'HOSPITAL',
@@ -65,6 +66,23 @@ def national_totals(district_rows):
         } for facility in all_facilities
     ]
 
+unique_facilities = []
+
+def facility_is_unique(facility_rec):
+    hash = "{0}_{1}_{2}_{3}".format(
+        facility_rec[1],
+        facility_rec[2],
+        facility_rec[3],
+        facility_rec[4]
+    )
+    if hash not in unique_facilities:
+        unique_facilities.append(hash)
+        return True
+
+    return False
+
+#HealthFacility = namedtuple('HealthFacility',
+#    ['facility_type', 'district_name', 'vdc_name', 'vdc_code'])
 
 def get_data_from_shapefile(filename):
     sf = shapefile.Reader(filename)
@@ -81,18 +99,22 @@ def get_data_from_shapefile(filename):
 
             if (len(facility_type) and
                facility_type in facility_type_map):
-                    facility_type = facility_type_map[facility_type]
 
-                    if facility_type in data[district_id]:
-                        new_count = data[district_id][facility_type] + 1
-                    else:
-                        new_count = 1
+                    if facility_is_unique(rec):
+                        facility_type = facility_type_map[facility_type]
 
-                    data[district_id][facility_type] = new_count
-            else:
+                        if facility_type in data[district_id]:
+                            new_count = data[district_id][facility_type] + 1
+                        else:
+                            new_count = 1
+
+                        data[district_id][facility_type] = new_count
+                    elif verbose:
+                        print("{0} not unique".format(rec))
+            elif verbose:
                 print("{0} not in facility_type_map".format(rec))
 
-        else:
+        elif verbose:
             print("Unknown district: {0}".format(rec))
 
     return data
@@ -159,7 +181,7 @@ def main(args):
     inputfile = ''
     outputfile = ''
     try:
-        opts, args = getopt.getopt(args, 'hi:o:',
+        opts, args = getopt.getopt(args, 'hvi:o:',
                                    ['inputfile=',
                                     'outputfile='])
     except getopt.GetoptError:
@@ -177,6 +199,9 @@ def main(args):
             inputfile = arg
         elif opt in ('-o', '--outputfile'):
             outputfile = arg
+        elif opt == '-v':
+            global verbose
+            verbose = True
 
     convert_to_csv(inputfile, outputfile)
     print('Done!')
