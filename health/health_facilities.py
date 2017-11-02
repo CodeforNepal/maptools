@@ -6,6 +6,7 @@ import sys
 from collections import namedtuple
 from shared import geoidmappings
 
+verbose = False
 
 facility_type_map = {
     'Hospital': 'HOSPITAL',
@@ -65,11 +66,14 @@ def national_totals(district_rows):
         } for facility in all_facilities
     ]
 
+HealthFacility = namedtuple('HealthFacility',
+    ['facility_type', 'district_id', 'vdc_name', 'vdc_code'])
 
 def get_data_from_shapefile(filename):
     sf = shapefile.Reader(filename)
 
     data = {}
+    facilities = set()
     for rec in sf.records():
         district = rec[2]
         if district in geoidmappings.names_to_geo_ids:
@@ -77,23 +81,33 @@ def get_data_from_shapefile(filename):
             if district_id not in data:
                 data[district_id] = {}
 
-            facility_type = rec[1]
+            this_facility = HealthFacility(
+                    rec[1], district_id, rec[3], rec[4])
 
-            if (len(facility_type) and
-               facility_type in facility_type_map):
-                    facility_type = facility_type_map[facility_type]
+            if verbose and this_facility in facilities:
+                print("{0} not unique".format(this_facility))
 
-                    if facility_type in data[district_id]:
-                        new_count = data[district_id][facility_type] + 1
-                    else:
-                        new_count = 1
+            facilities.add(HealthFacility(
+                    rec[1], district_id, rec[3], rec[4]))
 
-                    data[district_id][facility_type] = new_count
-            else:
-                print("{0} not in facility_type_map".format(rec))
-
-        else:
+        elif verbose:
             print("Unknown district: {0}".format(rec))
+
+    for f in facilities:
+        if (len(f.facility_type) and
+           f.facility_type in facility_type_map):
+
+                facility_type = facility_type_map[f.facility_type]
+
+                if facility_type in data[f.district_id]:
+                    new_count = data[f.district_id][facility_type] + 1
+                else:
+                    new_count = 1
+
+                data[f.district_id][facility_type] = new_count
+
+        elif verbose:
+            print("{0} not in facility_type_map".format(rec))
 
     return data
 
@@ -159,7 +173,7 @@ def main(args):
     inputfile = ''
     outputfile = ''
     try:
-        opts, args = getopt.getopt(args, 'hi:o:',
+        opts, args = getopt.getopt(args, 'hvi:o:',
                                    ['inputfile=',
                                     'outputfile='])
     except getopt.GetoptError:
@@ -177,6 +191,9 @@ def main(args):
             inputfile = arg
         elif opt in ('-o', '--outputfile'):
             outputfile = arg
+        elif opt == '-v':
+            global verbose
+            verbose = True
 
     convert_to_csv(inputfile, outputfile)
     print('Done!')
