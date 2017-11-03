@@ -72,19 +72,15 @@ def meats_for_district(death_row_tuple):
 
     geo_code = geoidmappings.names_to_geo_ids[
         death_row_tuple.district_name.title().strip('\n')]
-    return [
-        {
+    district = {
             'geo_code': geo_code,
             'geo_level': geo_level,
-            'buff': death_row_tuple.buff,
-            'mutton': death_row_tuple.mutton,
-            'chevon': death_row_tuple.chevon,
-            'pork': death_row_tuple.pork,
-            'chicken': death_row_tuple.chicken,
-            'duck': death_row_tuple.duck,
-            'total': death_row_tuple.total
-        }
-    ]
+    }
+    district.update({
+        k: getattr(death_row_tuple, k) for k 
+            in meat_types + ['total']
+    })
+    return [district]
 
 def get_cell_number(cell):
     return cell if cell else '0'
