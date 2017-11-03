@@ -12,8 +12,7 @@ meat_types = [
     'chevon',
     'pork',
     'chicken',
-    'duck',
-    'total'
+    'duck'
 ]
 
 COLUMNS = {
@@ -33,6 +32,8 @@ ConvertedRow = namedtuple('ConvertedRow',
      'district_name'
     ] +
     meat_types
+    + 
+    ['total']
 )
 
 def national_totals(district_rows):
@@ -50,17 +51,15 @@ def national_totals(district_rows):
             all_districts - districts_with_data)
         )
 
-    return [{
+    nationals = {
             'geo_level': 'country',
-            'geo_code': 'NP',
-            'buff': sum(map(lambda i: int(i['buff']), group)),
-            'mutton': sum(map(lambda i: int(i['mutton']), group)),
-            'chevon': sum(map(lambda i: int(i['chevon']), group)),
-            'pork': sum(map(lambda i: int(i['pork']), group)),
-            'chicken': sum(map(lambda i: int(i['chicken']), group)),
-            'duck': sum(map(lambda i: int(i['duck']), group)),
-            'total': sum(map(lambda i: int(i['total']), group))
-    }]
+            'geo_code': 'NP'   
+    }
+    nationals.update({
+            key: sum(map(lambda i: int(i[key]), group)) for key
+                in meat_types + ['total']
+    })
+    return [nationals]
 
 def deaths_for_district(death_row_tuple):
     geo_level = 'district'
@@ -116,9 +115,9 @@ def convert_csv(inputfile, outputfile):
         writer = csv.writer(csv_out)
         writer.writerow(csv_keys)
         for row in national_totals(district_data) + district_data:
-            for meattype in ['buff', 'mutton', 'chevon', 'pork', 'chicken', 'duck']:
-                writer.writerow([row['geo_code'], row['geo_level'], 
-                    meattype.upper(), row[meattype]])
+            map(lambda meattype: 
+                    writer.writerow([row['geo_code'], row['geo_level'], 
+                    meattype.upper(), row[meattype]]), meat_types)
             writer.writerow([row['geo_code'], row['geo_level'], 
                'TOTAL', row['total']])
 
