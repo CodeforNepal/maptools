@@ -7,7 +7,7 @@ from shared import geoidmappings
 
 
 meat_types = [
-    'buff', 
+    'buff',
     'mutton',
     'chevon',
     'pork',
@@ -27,24 +27,25 @@ COLUMNS = {
     'total': 7
 }
 
-ConvertedRow = namedtuple('ConvertedRow', 
-    ['district_code', 
-     'district_name'
+ConvertedRow = namedtuple('ConvertedRow', [
+        'district_code',
+        'district_name'
     ] +
     meat_types
-    + 
+    +
     ['total']
 )
+
 
 def national_totals(district_rows):
     group = [row for row in district_rows]
 
     # find any missing districts
-    all_districts = set([val for _, val 
-        in geoidmappings.names_to_geo_ids.iteritems()])
+    all_districts = set([val for _, val in
+                        geoidmappings.names_to_geo_ids.iteritems()])
 
-    districts_with_data = set([row['geo_code'] for row 
-        in district_rows])
+    districts_with_data = set([row['geo_code'] for row
+                              in district_rows])
 
     if len(all_districts - districts_with_data):
         print('Districts without data:{0}'.format(
@@ -53,13 +54,14 @@ def national_totals(district_rows):
 
     nationals = {
             'geo_level': 'country',
-            'geo_code': 'NP'   
+            'geo_code': 'NP'
     }
     nationals.update({
             key: sum(map(lambda i: int(i[key]), group)) for key
-                in meat_types + ['total']
+            in meat_types + ['total']
     })
     return [nationals]
+
 
 def meats_for_district(meat_row_tuple):
     geo_level = 'district'
@@ -77,32 +79,36 @@ def meats_for_district(meat_row_tuple):
             'geo_level': geo_level,
     }
     district.update({
-        k: getattr(meat_row_tuple, k) for k 
-            in meat_types + ['total']
+        k: getattr(meat_row_tuple, k) for k
+        in meat_types + ['total']
     })
     return [district]
 
+
 def get_cell_number(cell):
     return cell if cell else '0'
+
 
 def convert_csv(inputfile, outputfile):
     print('Input file: {}\nOutput file: {}'.format(inputfile, outputfile))
     with open(inputfile, 'r') as data, open(outputfile, 'w') as csv_out:
         reader = csv.reader(data)
         csv_rows = [row for row in reader][1:]
-        
+
         district_data = [row for district_meats
                          in
                          [meats_for_district(
-                             ConvertedRow(row[COLUMNS['district_code']],
-                                         row[COLUMNS['district_name']],
-                                         get_cell_number(row[COLUMNS['buff']]),
-                                         get_cell_number(row[COLUMNS['mutton']]),
-                                         get_cell_number(row[COLUMNS['chevon']]),
-                                         get_cell_number(row[COLUMNS['pork']]),
-                                         get_cell_number(row[COLUMNS['chicken']]),
-                                         get_cell_number(row[COLUMNS['duck']]),
-                                         get_cell_number(row[COLUMNS['total']])))
+                             ConvertedRow(
+                                row[COLUMNS['district_code']],
+                                row[COLUMNS['district_name']],
+                                get_cell_number(row[COLUMNS['buff']]),
+                                get_cell_number(row[COLUMNS['mutton']]),
+                                get_cell_number(row[COLUMNS['chevon']]),
+                                get_cell_number(row[COLUMNS['pork']]),
+                                get_cell_number(row[COLUMNS['chicken']]),
+                                get_cell_number(row[COLUMNS['duck']]),
+                                get_cell_number(row[COLUMNS['total']]))
+                             )
                              for row in csv_rows if
                              row[COLUMNS['district_code']]]
                          for row in district_meats]
@@ -111,11 +117,15 @@ def convert_csv(inputfile, outputfile):
         writer = csv.writer(csv_out)
         writer.writerow(csv_keys)
         for row in national_totals(district_data) + district_data:
-            map(lambda meattype: 
-                    writer.writerow([row['geo_code'], row['geo_level'], 
-                    meattype.upper(), row[meattype]]), meat_types)
-            writer.writerow([row['geo_code'], row['geo_level'], 
-               'TOTAL', row['total']])
+            map(lambda meattype:
+                writer.writerow([
+                        row['geo_code'],
+                        row['geo_level'],
+                        meattype.upper(),
+                        row[meattype]]),
+                meat_types)
+            writer.writerow([row['geo_code'], row['geo_level'],
+                            'TOTAL', row['total']])
 
 
 def main(args):
