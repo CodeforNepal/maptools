@@ -61,7 +61,7 @@ def national_totals(district_rows):
     })
     return [nationals]
 
-def deaths_for_district(death_row_tuple):
+def meats_for_district(death_row_tuple):
     geo_level = 'district'
     name_title = death_row_tuple.district_name.title()
     if name_title not in geoidmappings.names_to_geo_ids:
@@ -97,7 +97,7 @@ def convert_csv(inputfile, outputfile):
         
         district_data = [row for district_deliveries
                          in
-                         [deaths_for_district(
+                         [meats_for_district(
                              ConvertedRow(row[COLUMNS['district_code']],
                                          row[COLUMNS['district_name']],
                                          get_cell_number(row[COLUMNS['buff']]),
