@@ -61,9 +61,9 @@ def national_totals(district_rows):
     })
     return [nationals]
 
-def meats_for_district(death_row_tuple):
+def meats_for_district(meat_row_tuple):
     geo_level = 'district'
-    name_title = death_row_tuple.district_name.title()
+    name_title = meat_row_tuple.district_name.title()
     if name_title not in geoidmappings.names_to_geo_ids:
         print('Unknown district:{0}'.format(
             name_title)
@@ -71,13 +71,13 @@ def meats_for_district(death_row_tuple):
         return []
 
     geo_code = geoidmappings.names_to_geo_ids[
-        death_row_tuple.district_name.title().strip('\n')]
+        meat_row_tuple.district_name.title().strip('\n')]
     district = {
             'geo_code': geo_code,
             'geo_level': geo_level,
     }
     district.update({
-        k: getattr(death_row_tuple, k) for k 
+        k: getattr(meat_row_tuple, k) for k 
             in meat_types + ['total']
     })
     return [district]
@@ -91,7 +91,7 @@ def convert_csv(inputfile, outputfile):
         reader = csv.reader(data)
         csv_rows = [row for row in reader][1:]
         
-        district_data = [row for district_deliveries
+        district_data = [row for district_meats
                          in
                          [meats_for_district(
                              ConvertedRow(row[COLUMNS['district_code']],
@@ -105,7 +105,7 @@ def convert_csv(inputfile, outputfile):
                                          get_cell_number(row[COLUMNS['total']])))
                              for row in csv_rows if
                              row[COLUMNS['district_code']]]
-                         for row in district_deliveries]
+                         for row in district_meats]
 
         csv_keys = ['geo_code', 'geo_level', 'meat', 'total']
         writer = csv.writer(csv_out)
