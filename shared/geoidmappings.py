@@ -67,6 +67,7 @@ names_to_geo_ids = {
     'Parsa': '33',
     'Pyuthan': '59',
     'Ramechhap': '18',
+    'Ramechap': '18',
     'Rasuwa': '28',
     'Rautahat': '31',
     'Rolpa': '58',
