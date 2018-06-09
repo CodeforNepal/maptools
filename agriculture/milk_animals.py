@@ -2,36 +2,29 @@ import csv
 import getopt
 import sys
 from collections import namedtuple
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
 from shared import geoidmappings
 
 
-livestock = [
-    'cattle',
-    'buffaloes',
-    'sheep',
-    'goats',
-    'pigs',
-    'fowl',
-    'ducks'
+milk_animals = [
+    'cows',
+    'buffaloes'
 ]
 
 COLUMNS = {
     'district_code': 0,
     'district_name': 0,
-    'cattle': 1,
-    'buffaloes': 2,
-    'sheep': 3,
-    'goats': 4,
-    'pigs': 5,
-    'fowl': 6,
-    'ducks': 7
+    'cows': 1,
+    'buffaloes': 2
 }
 
 ConvertedRow = namedtuple('ConvertedRow', [
     'district_code',
     'district_name'
-] + livestock
+] + milk_animals
                           )
 
 
@@ -55,13 +48,13 @@ def national_totals(district_rows):
             'geo_code': 'NP'
     }
     nationals.update({
-            key: sum(map(lambda i: int(i[key]), group)) for key in livestock
+            key: sum(map(lambda i: int(i[key]), group)) for key in milk_animals
     })
     return [nationals]
 
 
-def livestock_for_district(livestock_row_tuple):
-    name_title = livestock_row_tuple.district_name.strip().title()
+def animals_for_district(milk_animal_row_tuple):
+    name_title = milk_animal_row_tuple.district_name.strip().title()
     if name_title not in geoidmappings.names_to_geo_ids:
         print('Unknown district:{0}'.format(
             name_title)
@@ -69,13 +62,13 @@ def livestock_for_district(livestock_row_tuple):
         return []
 
     geo_code = geoidmappings.names_to_geo_ids[
-        livestock_row_tuple.district_name.strip().title().strip('\n')]
+        milk_animal_row_tuple.district_name.strip().title().strip('\n')]
     district = {
             'geo_code': geo_code,
             'geo_level': 'district',
     }
     district.update({
-        k: getattr(livestock_row_tuple, k) for k in livestock
+        k: getattr(milk_animal_row_tuple, k) for k in milk_animals
     })
     return [district]
 
@@ -90,35 +83,30 @@ def convert_csv(inputfile, outputfile):
         reader = csv.reader(data)
         csv_rows = [row for row in reader][1:]
 
-        district_data = [row for district_livestock
+        district_data = [row for district_milk
                          in
-                         [livestock_for_district(
+                         [animals_for_district(
                              ConvertedRow(
                                 row[COLUMNS['district_code']],
                                 row[COLUMNS['district_name']],
-                                get_cell_number(row[COLUMNS['cattle']]),
-                                get_cell_number(row[COLUMNS['buffaloes']]),
-                                get_cell_number(row[COLUMNS['sheep']]),
-                                get_cell_number(row[COLUMNS['goats']]),
-                                get_cell_number(row[COLUMNS['pigs']]),
-                                get_cell_number(row[COLUMNS['fowl']]),
-                                get_cell_number(row[COLUMNS['ducks']]))
+                                get_cell_number(row[COLUMNS['cows']]),
+                                get_cell_number(row[COLUMNS['buffaloes']]))
                              )
                              for row in csv_rows if
                              row[COLUMNS['district_code']]]
-                         for row in district_livestock]
+                         for row in district_milk]
 
-        csv_keys = ['geo_code', 'geo_level', 'livestock', 'total']
+        csv_keys = ['geo_code', 'geo_level', 'milk_animal', 'total']
         writer = csv.writer(csv_out)
         writer.writerow(csv_keys)
         sorted_districts = sorted(district_data, key=lambda x: x.get('geo_code'))
         for row in national_totals(district_data) + sorted_districts:
-            csv_rows = map(lambda livestocktype:
+            csv_rows = map(lambda animaltype:
                            [row['geo_code'],
                             row['geo_level'],
-                            livestocktype.upper(),
-                            row[livestocktype]],
-                           livestock)
+                            animaltype.upper(),
+                            row[animaltype]],
+                           milk_animals)
             for csv_row in csv_rows:
                 writer.writerow(csv_row)
 
@@ -131,13 +119,13 @@ def main(args):
                                    ['inputfile=',
                                     'outputfile='])
     except getopt.GetoptError:
-        print('python livestock.py '
+        print('python milk_animals.py '
               '-i <inputfile> '
               '-o <outputfile> ')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('python livestock.py '
+            print('python milk_animals.py '
                   '-i <inputfile> '
                   '-o <outputfile> ')
             sys.exit()
