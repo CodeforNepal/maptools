@@ -19,7 +19,7 @@ def convert_json(input_file, output_file):
             old_properties = feature['properties']
 
             code = str(old_properties['FID'])
-            name = str(old_properties['district'])
+            name = str(old_properties['district']).strip().title()
             new_properties = {
                 'code': code,
                 'name': name,
