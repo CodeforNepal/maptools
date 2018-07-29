@@ -17,7 +17,7 @@ def convert_csv(input_file, output_file):
         def select_keys_from_properties(province):
             return {
                 'name': province['name'],
-                'geocode': province['code'],
+                'geocode': 'pro-'+str(province['code']),
                 'year': '2016',
                 'parent_level': 'country',
                 'long_name': province['name'],
