@@ -31,6 +31,7 @@ def main(args):
         # pdb.set_trace()
 
         for feature in data['features']:
+            print(feature['properties']['DISTRICT'])
             outjson.append({feature['properties']['DISTRICT'].title(): 'pro-'+str(feature['properties']['PROVINCE'])})
 
 
