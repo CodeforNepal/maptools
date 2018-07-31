@@ -8,14 +8,14 @@ Dhankuta,dis-1299,2016,province,Dhankuta,district,pro-1
 Morang,dis-1326,2016,province,Morang,district,pro-1
 Sankhuwasabha,dis-1394,2016,province,Sankhuwasabha,district,pro-1
 Sunsari,dis-1467,2016,province,Sunsari,district,pro-1
-Terathum,dis-1475,2016,province,Terathum,district,
+Tehrathum,dis-1475,2016,province,Tehrathum,district,pro-1
 Ilam,dis-1538,2016,province,Ilam,district,pro-1
 Jhapa,dis-1581,2016,province,Jhapa,district,pro-1
 Panchthar,dis-1658,2016,province,Panchthar,district,pro-1
 Taplejung,dis-1659,2016,province,Taplejung,district,pro-1
 Khotang,dis-1709,2016,province,Khotang,district,pro-1
 Okhaldhunga,dis-1809,2016,province,Okhaldhunga,district,pro-1
-Kavrepalanchok,dis-190,2016,province,Kavrepalanchok,district,
+Kavrepalanchowk,dis-190,2016,province,Kavrepalanchowk,district,pro-3
 Saptari,dis-1910,2016,province,Saptari,district,pro-2
 Bhaktapur,dis-2,2016,province,Bhaktapur,district,pro-3
 Siraha,dis-2001,2016,province,Siraha,district,pro-2
@@ -38,7 +38,7 @@ Dang,dis-2671,2016,province,Dang,district,pro-5
 Nuwakot,dis-268,2016,province,Nuwakot,district,pro-3
 Pyuthan,dis-2714,2016,province,Pyuthan,district,pro-5
 Rolpa,dis-2785,2016,province,Rolpa,district,pro-5
-Rukum,dis-2807,2016,province,Rukum,district,
+Eastern Rukum,dis-2807,2016,province,Eastern Rukum,district,pro-5
 Salyan,dis-2856,2016,province,Salyan,district,pro-6
 Baglung,dis-2890,2016,province,Baglung,district,pro-4
 Mustang,dis-2920,2016,province,Mustang,district,pro-4
@@ -48,12 +48,12 @@ Gorkha,dis-3077,2016,province,Gorkha,district,pro-4
 Kaski,dis-3111,2016,province,Kaski,district,pro-4
 Rasuwa,dis-319,2016,province,Rasuwa,district,pro-3
 Lamjung,dis-3190,2016,province,Lamjung,district,pro-4
-Manag,dis-3212,2016,province,Manag,district,
+Manang,dis-3212,2016,province,Manang,district,pro-4
 Syangja,dis-3227,2016,province,Syangja,district,pro-4
-Tanahun,dis-3324,2016,province,Tanahun,district,
+Tanahu,dis-3324,2016,province,Tanahu,district,pro-4
 Arghakhanchi,dis-3357,2016,province,Arghakhanchi,district,pro-5
 Gulmi,dis-3427,2016,province,Gulmi,district,pro-5
-Kapilbastu,dis-3487,2016,province,Kapilbastu,district,
+Kapilvastu,dis-3487,2016,province,Kapilvastu,district,pro-5
 Nawalparasi,dis-3579,2016,province,Nawalparasi,district,pro-5
 Nawalparasi,dis-3585,2016,province,Nawalparasi,district,pro-5
 Palpa,dis-3630,2016,province,Palpa,district,pro-5
