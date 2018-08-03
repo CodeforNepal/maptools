@@ -20,7 +20,7 @@ def convert_json(input_file, output_file):
 
             code = str(old_properties['OBJECTID'])
             new_properties = {
-                'code': '{}'.format(int(code)),
+                'code': '{}-{}'.format('pro', code),
                 'name': '{} {}'.format('Province No.', code),
                 'geoid': '{}-{}'.format('pro', code),
                 'level': 'province'
