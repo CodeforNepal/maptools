@@ -24,9 +24,9 @@ def convert_json(input_file, output_file):
             parent_name = str(old_properties['FIRST_DIST']).title()
             parent_code = '{}-{}'.format('dis', old_properties['FIRST_DCOD'])
             new_properties = {
-                'code': code,
+                'code': '{}-{}'.format('loc', code),
                 'name': name,
-                'geoid': '{}-{}'.format('local', code),
+                'geoid': '{}-{}'.format('loc', code),
                 'level': 'local',
                 'division': division,
                 'parent_name': parent_name,
